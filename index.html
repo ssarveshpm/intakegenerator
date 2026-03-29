@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SRV Intake Generator</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div id="app">
+        <!-- Login View -->
+        <div id="login-view" class="view">
+            <div class="auth-container">
+                <div class="auth-card">
+                    <div class="auth-header">
+                        <h1>Login</h1>
+                        <p>Enter your credentials to access SRV Intake Generator</p>
+                    </div>
+                    <form id="login-form">
+                        <div class="form-group">
+                            <label for="username">Username</label>
+                            <input type="text" id="username" placeholder="johndoe" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" id="password" placeholder="••••••••" required>
+                        </div>
+                        <div id="login-error" class="error-msg"></div>
+                        <button type="submit" id="login-btn" class="btn btn-primary">
+                            <span>Login</span>
+                            <div class="loader" id="login-loader" style="display: none;"></div>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard View -->
+        <div id="dashboard-view" class="view" style="display: none;">
+            <nav class="navbar">
+                <div class="nav-brand">Intake Data Generator</div>
+                <div class="nav-user">
+                    <span id="user-display">User Name</span>
+                    <span id="role-badge" class="badge">Role</span>
+                    <button id="logout-btn" class="btn btn-outline btn-sm">Logout</button>
+                </div>
+            </nav>
+            <main class="dashboard-content">
+                <header class="dashboard-header">
+                    <div class="header-main" style="justify-content: flex-end;">
+                        <button id="add-record-btn" class="btn-icon">
+                            <svg viewBox="0 0 24 24" width="24" height="24">
+                                <path fill="currentColor" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+                            </svg>
+                        </button>
+                    </div>
+                </header>
+
+                <div class="grid-container">
+                    <table class="data-grid">
+                        <thead>
+                            <tr>
+                                <th>Reference No</th>
+                                <th>Date & Time</th>
+                                <th>User</th>
+                                <th>Action ID</th>
+                                <th>Job ID</th>
+                                <th>Status</th>
+                                <th>Run Time</th>
+                                <th>Intake Number</th>
+                                <th style="width: 120px;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="grid-body">
+                            <!-- Rows will be injected here -->
+                            <tr>
+                                <td colspan="8" class="empty-state">No records found.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </main>
+        </div>
+
+        <!-- View Record View -->
+        <section id="view-record-view" class="view section hidden">
+            <nav class="navbar">
+                <div class="nav-brand">View Intake Record</div>
+                <div class="nav-user">
+                    <button class="btn btn-primary btn-sm back-to-dash" style="width: auto; padding: 10px 20px;">
+                        ← Back to Dashboard
+                    </button>
+                </div>
+            </nav>
+            <main class="form-content">
+                <header class="form-header">
+                    <p id="view-ref-display">Reference: SRV-0</p>
+                </header>
+
+                <div class="form-card">
+                    <div id="view-person-details" class="person-details-grid">
+                        <!-- Dynamic read-only fields will be injected here -->
+                    </div>
+
+                    <div class="form-actions" style="justify-content: center; margin-top: 40px;">
+                        <button class="btn btn-primary back-to-dash" style="width: auto; padding: 12px 40px;">
+                            Back to Dashboard
+                        </button>
+                    </div>
+                </div>
+            </main>
+        </section>
+
+        <!-- View Logs View -->
+        <section id="logs-view" class="view section hidden">
+            <nav class="navbar">
+                <div class="nav-brand">Execution Logs</div>
+                <div class="nav-user">
+                    <button class="btn btn-primary btn-sm back-to-dash" style="width: auto; padding: 10px 20px;">
+                        ← Back to Dashboard
+                    </button>
+                </div>
+            </nav>
+            <main class="form-content">
+                <header class="form-header" style="display: flex; justify-content: space-between; align-items: center;">
+                    <p id="log-ref-display" style="margin: 0;">Reference: SRV-0</p>
+                    <button id="fetch-latest-logs" class="btn btn-sm"
+                        style="width: auto; padding: 8px 16px; background: var(--primary); border: none; color: white; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" width="16">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                        Fetch Latest
+                    </button>
+                </header>
+
+                <div class="log-card">
+                    <div id="log-content" class="log-terminal">
+                        <!-- Logs will be injected here -->
+                    </div>
+                </div>
+            </main>
+        </section>
+
+        <!-- Add New Record View -->
+        <div id="add-view" class="view" style="display: none;">
+            <nav class="navbar">
+                <div class="nav-brand">Intake Data Generator</div>
+                <div class="nav-user">
+                    <button id="back-btn" class="btn btn-outline btn-sm">Back to Dashboard</button>
+                </div>
+            </nav>
+            <main class="form-content">
+                <header class="form-header">
+                    <p>Enter details for the new intake entry</p>
+                </header>
+
+                <div class="form-card">
+                    <div class="form-group">
+                        <label for="num-persons">Number of persons</label>
+                        <select id="num-persons" class="form-select">
+                            <option value="2">2 Persons</option>
+                            <option value="3">3 Persons</option>
+                            <option value="4">4 Persons</option>
+                            <option value="5">5 Persons</option>
+                        </select>
+                    </div>
+
+                    <div id="person-fields-container">
+                        <!-- Dynamic fields will be injected here -->
+                    </div>
+
+                    <div class="form-actions">
+                        <button id="submit-record-btn" class="btn btn-primary">Submit Record</button>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+
+</html>
