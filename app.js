@@ -2,7 +2,7 @@
  * Premium Frontend Logic for Login and Auth Management
  */
 
-const API_URL = "https://script.google.com/macros/s/AKfycbxhGzoqa-Of0XuXa0iCj8fycaVuAin6t609uwfxtHioIOrgSM_AkPOLSaImN98z9YLz/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbyqyoERHIv0unhLhF-__YmQj0coZIvnqc_yaXyJXtd-Un1HEivGySiFRuLE-tNa3o_-/exec";
 
 // DOM Elements
 const loginView = document.getElementById('login-view');
@@ -92,17 +92,18 @@ async function handleIntakeSubmit(e) {
     // 1. Collect all Person Data into structured JSON
     const personsData = {};
     for (let i = 1; i <= totalPersons; i++) {
-        const fname = document.querySelector(`input[name="p${i}_fname"]`)?.value || '';
-        const lname = document.querySelector(`input[name="p${i}_lname"]`)?.value || '';
-        const gender = document.querySelector(`select[name="p${i}_gender"]`)?.value || '';
-        const dob = document.querySelector(`input[name="p${i}_dob"]`)?.value || '';
-        const p_role = document.querySelector(`select[name="p${i}_role"]`)?.value || '';
+        const baseId = `add-p${i}`;
+        const fname = addView.querySelector(`input[name="p${i}_fname"]`)?.value || '';
+        const lname = addView.querySelector(`input[name="p${i}_lname"]`)?.value || '';
+        const gender = addView.querySelector(`select[name="p${i}_gender"]`)?.value || '';
+        const dob = addView.querySelector(`input[name="p${i}_dob"]`)?.value || '';
+        const p_role = addView.querySelector(`select[name="p${i}_role"]`)?.value || '';
 
         // Allegation fields (only for victims)
-        const classification = document.getElementById(`p${i}_classification_val`)?.value || '';
-        const sexual = document.getElementById(`p${i}_sexual_abuse_val`)?.value || '';
-        const physical = document.getElementById(`p${i}_physical_abuse_val`)?.value || '';
-        const perpetrator = document.getElementById(`p${i}_perpetrator_val`)?.value || '';
+        const classification = document.getElementById(`${baseId}_classification_val`)?.value || '';
+        const sexual = document.getElementById(`${baseId}_sexual_abuse_val`)?.value || '';
+        const physical = document.getElementById(`${baseId}_physical_abuse_val`)?.value || '';
+        const perpetrator = document.getElementById(`${baseId}_perpetrator_val`)?.value || '';
 
         personsData[`person${i}`] = {
             first_name: fname,
@@ -315,11 +316,15 @@ async function renderGrid() {
  * Generates HTML for a person section (Add or View mode)
  */
 function getPersonHTML(i, isViewOnly = false) {
+    const prefix = isViewOnly ? 'view' : 'add';
+    const baseId = `${prefix}-p${i}`;
     const disabledAttr = isViewOnly ? 'disabled' : '';
-    const clickAttr = isViewOnly ? '' : `onclick="toggleDropdown('p${i}_classification_list')"`;
-    const sexualClick = isViewOnly ? '' : `onclick="toggleDropdown('p${i}_sexual_abuse_list')"`;
-    const physicalClick = isViewOnly ? '' : `onclick="toggleDropdown('p${i}_physical_abuse_list')"`;
-    const perpClick = isViewOnly ? '' : `onclick="toggleDropdown('p${i}_perpetrator_list')"`;
+
+    // Scoped handlers
+    const clickAttr = isViewOnly ? '' : `onclick="toggleDropdown('${baseId}_classification_list')"`;
+    const sexualClick = isViewOnly ? '' : `onclick="toggleDropdown('${baseId}_sexual_abuse_list')"`;
+    const physicalClick = isViewOnly ? '' : `onclick="toggleDropdown('${baseId}_physical_abuse_list')"`;
+    const perpClick = isViewOnly ? '' : `onclick="toggleDropdown('${baseId}_perpetrator_list')"`;
 
     return `
         <div class="person-section ${isViewOnly ? 'view-only' : ''}">
@@ -355,57 +360,57 @@ function getPersonHTML(i, isViewOnly = false) {
                 </div>
             </div>
             
-            <div id="${isViewOnly ? 'view-' : ''}victim-fields-${i}" class="victim-fields hidden">
+            <div id="${baseId}-victim-fields" class="victim-fields hidden">
                 <div class="form-row dense">
                     <div class="form-group">
                         <label>Classification (Multi-select)</label>
-                        <div class="multi-select-container" id="p${i}_classification_wrap">
+                        <div class="multi-select-container" id="${baseId}_classification_wrap">
                             <div class="multi-select-display" ${clickAttr}>
                                 <span class="placeholder-text">Select Classification...</span>
                             </div>
-                            <div class="dropdown-list" id="p${i}_classification_list">
-                                <div class="dropdown-item" onclick="selectMultiItem('${i}', 'classification', 'Child Death')">Child Death</div>
-                                <div class="dropdown-item" onclick="selectMultiItem('${i}', 'classification', 'Hospital')">Hospital</div>
+                            <div class="dropdown-list" id="${baseId}_classification_list">
+                                <div class="dropdown-item" onclick="selectMultiItem('${baseId}', 'classification', 'Child Death')">Child Death</div>
+                                <div class="dropdown-item" onclick="selectMultiItem('${baseId}', 'classification', 'Hospital')">Hospital</div>
                             </div>
-                            <input type="hidden" name="p${i}_classification" id="p${i}_classification_val">
+                            <input type="hidden" name="p${i}_classification" id="${baseId}_classification_val">
                         </div>
                     </div>
                     <div class="form-group">
                         <label>Sexual Abuse (Multi-select)</label>
-                        <div class="multi-select-container" id="p${i}_sexual_abuse_wrap">
+                        <div class="multi-select-container" id="${baseId}_sexual_abuse_wrap">
                             <div class="multi-select-display" ${sexualClick}>
                                 <span class="placeholder-text">Select Sexual Abuse...</span>
                             </div>
-                            <div class="dropdown-list" id="p${i}_sexual_abuse_list">
-                                <div class="dropdown-item" onclick="selectMultiItem('${i}', 'sexual_abuse', 'Sexual Assault')">Sexual Assault</div>
-                                <div class="dropdown-item" onclick="selectMultiItem('${i}', 'sexual_abuse', 'Labor trafficking')">Labor trafficking</div>
+                            <div class="dropdown-list" id="${baseId}_sexual_abuse_list">
+                                <div class="dropdown-item" onclick="selectMultiItem('${baseId}', 'sexual_abuse', 'Sexual Assault')">Sexual Assault</div>
+                                <div class="dropdown-item" onclick="selectMultiItem('${baseId}', 'sexual_abuse', 'Labor trafficking')">Labor trafficking</div>
                             </div>
-                            <input type="hidden" name="p${i}_sexual_abuse" id="p${i}_sexual_abuse_val">
+                            <input type="hidden" name="p${i}_sexual_abuse" id="${baseId}_sexual_abuse_val">
                         </div>
                     </div>
                     <div class="form-group">
                         <label>Physical Abuse (Multi-select)</label>
-                        <div class="multi-select-container" id="p${i}_physical_abuse_wrap">
+                        <div class="multi-select-container" id="${baseId}_physical_abuse_wrap">
                             <div class="multi-select-display" ${physicalClick}>
                                 <span class="placeholder-text">Select Physical Abuse...</span>
                             </div>
-                            <div class="dropdown-list" id="p${i}_physical_abuse_list">
-                                <div class="dropdown-item" onclick="selectMultiItem('${i}', 'physical_abuse', 'Death')">Death</div>
-                                <div class="dropdown-item" onclick="selectMultiItem('${i}', 'physical_abuse', 'Extreme Pain')">Extreme Pain</div>
+                            <div class="dropdown-list" id="${baseId}_physical_abuse_list">
+                                <div class="dropdown-item" onclick="selectMultiItem('${baseId}', 'physical_abuse', 'Death')">Death</div>
+                                <div class="dropdown-item" onclick="selectMultiItem('${baseId}', 'physical_abuse', 'Extreme Pain')">Extreme Pain</div>
                             </div>
-                            <input type="hidden" name="p${i}_physical_abuse" id="p${i}_physical_abuse_val">
+                            <input type="hidden" name="p${i}_physical_abuse" id="${baseId}_physical_abuse_val">
                         </div>
                     </div>
                     <div class="form-group">
                         <label>Perpetrator (Multi-select)</label>
-                        <div class="multi-select-container" id="p${i}_perpetrator_wrap">
+                        <div class="multi-select-container" id="${baseId}_perpetrator_wrap">
                             <div class="multi-select-display" ${perpClick}>
                                 <span class="placeholder-text">Select Perpetrator...</span>
                             </div>
-                            <div class="dropdown-list" id="p${i}_perpetrator_list">
+                            <div class="dropdown-list" id="${baseId}_perpetrator_list">
                                 <!-- Dynamically populated -->
                             </div>
-                            <input type="hidden" name="p${i}_perpetrator" id="p${i}_perpetrator_val">
+                            <input type="hidden" name="p${i}_perpetrator" id="${baseId}_perpetrator_val">
                         </div>
                     </div>
                 </div>
@@ -527,7 +532,8 @@ function viewRecord(reference) {
         doc.querySelector(`input[name="p${id}_dob"]`).value = formatDateForInput(p.dob);
         doc.querySelector(`select[name="p${id}_role"]`).value = p.role || '';
 
-        const v_flds = document.getElementById(`view-victim-fields-${id}`);
+        const baseId = `view-p${id}`;
+        const v_flds = document.getElementById(`${baseId}-victim-fields`);
         if (p.role === 'Alleged Victim' && v_flds) {
             v_flds.classList.remove('hidden');
         }
@@ -537,11 +543,11 @@ function viewRecord(reference) {
             const rawVal = p[field === 'sexual_abuse' ? 'sexual' : (field === 'physical_abuse' ? 'physical' : field)];
             if (rawVal) {
                 const vals = rawVal.split(', ');
-                personSelections[`${id}_${field}`] = vals;
+                personSelections[`${baseId}_${field}`] = vals;
                 // Custom display update for View (no remove button)
-                updateMultiDisplay(id, field, true);
+                updateMultiDisplay(baseId, field, true);
             } else {
-                updateMultiDisplay(id, field, true);
+                updateMultiDisplay(baseId, field, true);
             }
         });
     });
@@ -603,13 +609,14 @@ function generatePersonFields(count) {
         section.innerHTML = getPersonHTML(i);
         personFieldsContainer.appendChild(section.firstElementChild);
 
+        const baseId = `add-p${i}`;
         const sectionEl = personFieldsContainer.lastElementChild;
         const f_inp = sectionEl.querySelector(`input[name="p${i}_fname"]`);
         const l_inp = sectionEl.querySelector(`input[name="p${i}_lname"]`);
         const d_inp = sectionEl.querySelector(`input[name="p${i}_dob"]`);
         const g_sel = sectionEl.querySelector(`select[name="p${i}_gender"]`);
         const r_sel = sectionEl.querySelector('.role-select');
-        const v_flds = document.getElementById(`victim-fields-${i}`);
+        const v_flds = document.getElementById(`${baseId}-victim-fields`);
 
         // Pre-fill defaults for Person 1 and 2
         if (i === 1) {
@@ -632,7 +639,7 @@ function generatePersonFields(count) {
         f_inp.addEventListener('input', updateTrigger);
         l_inp.addEventListener('input', updateTrigger);
         r_sel.addEventListener('change', (e) => {
-            const vf = document.getElementById(`victim-fields-${i}`);
+            const vf = document.getElementById(`${baseId}-victim-fields`);
             if (e.target.value === 'Alleged Victim') {
                 if (vf) vf.classList.remove('hidden');
             } else {
@@ -644,16 +651,16 @@ function generatePersonFields(count) {
 
     // Set multi-select defaults for Person 1 (Victim)
     if (count >= 1) {
-        selectMultiItem('1', 'classification', 'Hospital');
-        selectMultiItem('1', 'sexual_abuse', 'Sexual Assault');
-        selectMultiItem('1', 'physical_abuse', 'Extreme Pain');
+        selectMultiItem('add-p1', 'classification', 'Hospital');
+        selectMultiItem('add-p1', 'sexual_abuse', 'Sexual Assault');
+        selectMultiItem('add-p1', 'physical_abuse', 'Extreme Pain');
     }
 
     refreshPerpetratorLists();
 
     // Select default perpetrator for Person 1 after options are available
     if (count >= 2) {
-        selectMultiItem('1', 'perpetrator', 'Monty Norris');
+        selectMultiItem('add-p1', 'perpetrator', 'Monty Norris');
     }
 }
 
@@ -666,9 +673,9 @@ function refreshPerpetratorLists() {
 
     // 1. Collect all current Perpetrator names
     for (let i = 1; i <= count; i++) {
-        const fname = document.querySelector(`input[name="p${i}_fname"]`)?.value || '';
-        const lname = document.querySelector(`input[name="p${i}_lname"]`)?.value || '';
-        const role = document.querySelector(`select[name="p${i}_role"]`)?.value;
+        const fname = addView.querySelector(`input[name="p${i}_fname"]`)?.value || '';
+        const lname = addView.querySelector(`input[name="p${i}_lname"]`)?.value || '';
+        const role = addView.querySelector(`select[name="p${i}_role"]`)?.value;
 
         if (role === 'Alleged Perpetrator' && (fname || lname)) {
             perpNames.push(`${fname} ${lname}`.trim());
@@ -677,14 +684,15 @@ function refreshPerpetratorLists() {
 
     // 2. Update all Victim "Perpetrator" dropdowns
     for (let i = 1; i <= count; i++) {
-        const list = document.getElementById(`p${i}_perpetrator_list`);
+        const baseId = `add-p${i}`;
+        const list = document.getElementById(`${baseId}_perpetrator_list`);
         if (!list) continue;
 
         list.innerHTML = perpNames.length ? perpNames.map(name => `
-            <div class="dropdown-item" onclick="selectMultiItem('${i}', 'perpetrator', '${name}')">${name}</div>
+            <div class="dropdown-item" onclick="selectMultiItem('${baseId}', 'perpetrator', '${name}')">${name}</div>
         `).join('') : '<div class="dropdown-item" style="opacity: 0.5; pointer-events: none;">No Perpetrators found</div>';
 
-        updateMultiDisplay(i, 'perpetrator');
+        updateMultiDisplay(baseId, 'perpetrator');
     }
 }
 
@@ -728,8 +736,8 @@ function removeMultiItem(personId, field, value) {
 function updateMultiDisplay(personId, field, isViewOnly = false) {
     const key = `${personId}_${field}`;
     const values = personSelections[key] || [];
-    const container = document.querySelector(`#p${personId}_${field}_wrap .multi-select-display`);
-    const hiddenInput = document.getElementById(`p${personId}_${field}_val`);
+    const container = document.querySelector(`#${personId}_${field}_wrap .multi-select-display`);
+    const hiddenInput = document.getElementById(`${personId}_${field}_val`);
 
     if (!container || !hiddenInput) return;
 
@@ -747,7 +755,7 @@ function updateMultiDisplay(personId, field, isViewOnly = false) {
     }
 
     // Highlight selected items in list
-    const listItems = document.querySelectorAll(`#p${personId}_${field}_list .dropdown-item`);
+    const listItems = document.querySelectorAll(`#${personId}_${field}_list .dropdown-item`);
     listItems.forEach(item => {
         if (values.includes(item.textContent.trim())) {
             item.classList.add('selected');
@@ -778,7 +786,7 @@ async function viewLogs(reference, runid, forceRefresh = false) {
     // Switch view and show loading immediately
     switchView('logs');
     if (logContent) {
-        const loadingMsg = forceRefresh ? 'Synchronizing live logs from GitHub...' : 'Fetching logs from spreadsheet...';
+        const loadingMsg = forceRefresh ? 'Synchronizing live logs from GitHub...' : 'Fetching logs from DB...';
         logContent.innerHTML = `<span class="status-badge status-pending" style="background:none;"><span class="loader-sm" style="display:inline-block; margin-right:8px;"></span>${loadingMsg}</span>`;
     }
 
@@ -802,7 +810,6 @@ async function viewLogs(reference, runid, forceRefresh = false) {
                 const rec = cachedRecords.find(r => r.reference === reference);
                 if (rec) rec.intakeno = intakeNo;
 
-                const row = document.querySelector(`tr:has(.ref-no:contains("${reference}"))`);
                 // Safer row finding for grid update
                 const gridRows = document.querySelectorAll('#grid-body tr');
                 gridRows.forEach(tr => {
