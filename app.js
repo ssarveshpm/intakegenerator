@@ -2,7 +2,7 @@
  * Premium Frontend Logic for Login and Auth Management
  */
 
-const API_URL = "https://script.google.com/macros/s/AKfycbyqyoERHIv0unhLhF-__YmQj0coZIvnqc_yaXyJXtd-Un1HEivGySiFRuLE-tNa3o_-/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbydi_iLeuJPrGs4AtyB-03Z3THQjN5J3vkc997znwgM_8JKhWFw-1EohePExkj4wTyR/exec";
 
 // DOM Elements
 const loginView = document.getElementById('login-view');
@@ -88,6 +88,8 @@ async function handleIntakeSubmit(e) {
     const role = localStorage.getItem('loggedInRole');
     const token = localStorage.getItem('authToken');
     const totalPersons = parseInt(numPersonsSelect.value);
+    const portal = document.getElementById('portal').value;
+    const level = document.getElementById('level').value;
 
     // 1. Collect all Person Data into structured JSON
     const personsData = {};
@@ -130,6 +132,8 @@ async function handleIntakeSubmit(e) {
         body.append('role', role);
         body.append('token', token);
         body.append('totalPerson', totalPersons);
+        body.append('portal', portal);
+        body.append('level', level);
         body.append('personsData', JSON.stringify(personsData));
 
         const response = await fetch(API_URL, {
@@ -235,7 +239,7 @@ async function renderGrid() {
     // Show loading state
     gridBody.innerHTML = `
         <tr>
-            <td colspan="9" style="text-align: center; padding: 40px; color: var(--text-muted);">
+            <td colspan="10" style="text-align: center; padding: 40px; color: var(--text-muted);">
                 <span class="loader-sm" style="border-top-color: var(--primary);"></span> Loading records...
             </td>
         </tr>
@@ -256,7 +260,7 @@ async function renderGrid() {
             if (cachedRecords.length === 0) {
                 gridBody.innerHTML = `
                     <tr>
-                        <td colspan="9" style="text-align: center; padding: 40px; color: var(--text-muted);">
+                        <td colspan="10" style="text-align: center; padding: 40px; color: var(--text-muted);">
                             No records found. Click the + button to add one.
                         </td>
                     </tr>
@@ -271,6 +275,7 @@ async function renderGrid() {
                     <td>${record.requestby || '-'}</td>
                     <td><code class="code-id">${record.runid || '-'}</code></td>
                     <td><code class="code-id">${record.jobid || '-'}</code></td>
+                    <td>${record.portal || '-'}</td>
                     <td>
                         <span class="status-badge ${getStatusClass(record.runstatus)}">
                             ${capitalizeFirstLetter(record.runstatus || 'pending')}
@@ -304,7 +309,7 @@ async function renderGrid() {
         console.error('Fetch Error:', error);
         gridBody.innerHTML = `
             <tr>
-                <td colspan="9" style="text-align: center; padding: 40px; color: #ef4444;">
+                <td colspan="10" style="text-align: center; padding: 40px; color: #ef4444;">
                     Error loading records: ${error.message}. Please refresh.
                 </td>
             </tr>
@@ -469,9 +474,19 @@ async function refreshRecordStatus(reference, runid, btn) {
                     else row.cells[4].textContent = newJobId || '-';
                 }
 
-                // Update Run Time cell (index 6)
-                if (row.cells && row.cells[6]) {
-                    row.cells[6].textContent = newJobTime || '-';
+                // Update Run Time cell (index 7)
+                if (row.cells && row.cells[7]) {
+                    row.cells[7].textContent = newJobTime || '-';
+                }
+
+                // Enable View Logs button if Job ID is now available
+                if (newJobId) {
+                    const logsBtn = row.querySelector('button[title="View Logs"]');
+                    if (logsBtn) {
+                        logsBtn.disabled = false;
+                        logsBtn.style.opacity = "1";
+                        logsBtn.style.cursor = "pointer";
+                    }
                 }
             }
         } else {
@@ -500,6 +515,11 @@ function viewRecord(reference) {
     // 1. Setup Header
     const refDisplay = document.getElementById('view-ref-display');
     if (refDisplay) refDisplay.textContent = `Reference: ${record.reference} | Status: ${capitalizeFirstLetter(record.runstatus)}`;
+
+    const portalDisplay = document.getElementById('view-portal-display');
+    const levelDisplay = document.getElementById('view-level-display');
+    if (portalDisplay) portalDisplay.textContent = `Portal: ${record.portal || '-'}`;
+    if (levelDisplay) levelDisplay.textContent = `Level: ${record.level || '-'}`;
 
     // 2. Parse Persons Data
     let persons = {};
@@ -815,7 +835,7 @@ async function viewLogs(reference, runid, forceRefresh = false) {
                 gridRows.forEach(tr => {
                     const refSpan = tr.querySelector('.ref-no');
                     if (refSpan && refSpan.textContent === reference) {
-                        if (tr.cells && tr.cells[7]) tr.cells[7].textContent = intakeNo;
+                        if (tr.cells && tr.cells[8]) tr.cells[8].textContent = intakeNo;
                     }
                 });
             }

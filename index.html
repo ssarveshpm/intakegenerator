@@ -70,6 +70,7 @@
                                 <th>User</th>
                                 <th>Action ID</th>
                                 <th>Job ID</th>
+                                <th>Portal</th>
                                 <th>Status</th>
                                 <th>Run Time</th>
                                 <th>Intake Number</th>
@@ -79,7 +80,7 @@
                         <tbody id="grid-body">
                             <!-- Rows will be injected here -->
                             <tr>
-                                <td colspan="8" class="empty-state">No records found.</td>
+                                <td colspan="10" class="empty-state">No records found.</td>
                             </tr>
                         </tbody>
                     </table>
@@ -99,7 +100,15 @@
             </nav>
             <main class="form-content">
                 <header class="form-header">
-                    <p id="view-ref-display">Reference: SRV-0</p>
+                    <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                        <p id="view-ref-display" style="margin: 0;">Reference: SRV-0</p>
+                        <div id="view-global-details" style="display: flex; gap: 12px;">
+                            <span id="view-portal-display" class="badge"
+                                style="background: rgba(129, 140, 248, 0.1); color: var(--primary);">Portal: -</span>
+                            <span id="view-level-display" class="badge"
+                                style="background: rgba(129, 140, 248, 0.1); color: var(--primary);">Level: -</span>
+                        </div>
+                    </div>
                 </header>
 
                 <div class="form-card">
@@ -161,6 +170,23 @@
                 </header>
 
                 <div class="form-card">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="portal">Portal</label>
+                            <select id="portal" class="form-select">
+                                <option value="InternalQA">InternalQA</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="level">Level</label>
+                            <select id="level" class="form-select">
+                                <option value="Draft">Draft</option>
+                                <option value="CWS Assessment">CWS Assessment</option>
+                                <option value="Registered Not Assigned">Registered Not Assigned</option>
+                            </select>
+                        </div>
+                    </div>
+
                     <div class="form-group">
                         <label for="num-persons">Number of persons</label>
                         <select id="num-persons" class="form-select">
