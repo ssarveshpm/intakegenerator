@@ -92,7 +92,8 @@
         <section id="view-record-view" class="view section hidden">
             <nav class="navbar">
                 <div class="nav-brand">View Intake Record</div>
-                <div class="nav-user">
+                <div class="nav-user" style="display: flex; gap: 8px;">
+                    <button class="btn btn-outline btn-sm" id="view-duplicate-btn-top">Duplicate</button>
                     <button class="btn btn-primary btn-sm back-to-dash" style="width: auto; padding: 10px 20px;">
                         ← Back to Dashboard
                     </button>
@@ -116,9 +117,12 @@
                         <!-- Dynamic read-only fields will be injected here -->
                     </div>
 
-                    <div class="form-actions" style="justify-content: center; margin-top: 40px;">
+                    <div class="form-actions" style="justify-content: center; margin-top: 40px; gap: 16px;">
                         <button class="btn btn-primary back-to-dash" style="width: auto; padding: 12px 40px;">
                             Back to Dashboard
+                        </button>
+                        <button id="view-duplicate-btn-bottom" class="btn btn-outline" style="width: auto; padding: 12px 40px; border: 1px solid var(--primary); color: var(--primary);">
+                            Duplicate Record
                         </button>
                     </div>
                 </div>
@@ -175,6 +179,7 @@
                             <label for="portal">Portal</label>
                             <select id="portal" class="form-select">
                                 <option value="InternalQA">InternalQA</option>
+                                <option value="PlatformSync">PlatformSync</option>
                             </select>
                         </div>
                         <div class="form-group">

@@ -2,7 +2,23 @@
  * Premium Frontend Logic for Login and Auth Management
  */
 
-const API_URL = "https://script.google.com/macros/s/AKfycbydi_iLeuJPrGs4AtyB-03Z3THQjN5J3vkc997znwgM_8JKhWFw-1EohePExkj4wTyR/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbx3vWdDrrLW-zor-GSWcr0tf7jXaJbc4XUXQ1QWeMId1YUJ87ME7wVNCte7V6-IUq-s/exec";
+
+const AUTO_NAMES = ["Liam", "Olivia", "Noah", "Emma", "Mason", "Ava", "Ethan", "Sophia", "Lucas", "Isabella", "James", "Mia", "Benjamin", "Charlotte", "Elijah", "Amelia", "Logan", "Harper", "Alexander", "Evelyn", "Daniel", "Abigail", "Matthew", "Ella", "Joseph", "Scarlett", "David", "Victoria", "Samuel", "Grace", "Henry", "Chloe", "Jackson", "Lily", "Sebastian", "Hannah", "Jack", "Zoey", "Owen", "Penelope", "Wyatt", "Layla", "Gabriel", "Nora", "Carter", "Riley", "Jayden", "Stella", "Luke", "Ellie", "Julian", "Aria", "Levi", "Natalie", "Isaac", "Aurora", "Anthony", "Savannah", "Dylan", "Claire", "Thomas", "Skylar", "Charles", "Lucy", "Christopher", "Violet", "Joshua", "Hazel", "Andrew", "Brooklyn", "Ryan", "Addison", "Nathan", "Paisley", "Aaron", "Bella", "Caleb", "Madeline", "Christian", "Naomi", "Jonathan", "Kennedy", "Isaiah", "Ariana", "Hunter", "Piper", "Eli", "Delilah", "Connor", "Sadie", "Landon", "Julia", "Adrian", "Alice", "Robert", "Everly", "Kevin", "Ruby", "Brandon", "Daisy"];
+
+function getRandomName() {
+    return AUTO_NAMES[Math.floor(Math.random() * AUTO_NAMES.length)];
+}
+
+function getRandomDOB(minAge, maxAge) {
+    const today = new Date();
+    const age = Math.floor(Math.random() * (maxAge - minAge + 1)) + minAge;
+    const year = today.getFullYear() - age;
+    const month = Math.floor(Math.random() * 12);
+    const day = Math.floor(Math.random() * 28) + 1;
+    const dob = new Date(year, month, day);
+    return dob.toISOString().split('T')[0];
+}
 
 // DOM Elements
 const loginView = document.getElementById('login-view');
@@ -30,6 +46,7 @@ const submitIntakeBtn = document.getElementById('submit-record-btn');
 let cachedRecords = [];
 let currentLogRef = '';
 let currentLogRunId = '';
+let currentViewedRecord = null; // Track current record for duplication
 
 /**
  * Initialize components and check auth status
@@ -76,6 +93,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Intake Submission
     if (submitIntakeBtn) submitIntakeBtn.addEventListener('click', handleIntakeSubmit);
+
+    // Duplication Listeners
+    const dupBtnTop = document.getElementById('view-duplicate-btn-top');
+    const dupBtnBottom = document.getElementById('view-duplicate-btn-bottom');
+    if (dupBtnTop) dupBtnTop.addEventListener('click', handleDuplicate);
+    if (dupBtnBottom) dupBtnBottom.addEventListener('click', handleDuplicate);
 });
 
 /**
@@ -336,6 +359,15 @@ function getPersonHTML(i, isViewOnly = false) {
             <h3>Person ${i}</h3>
             <div class="form-row dense">
                 <div class="form-group">
+                    <label>Role</label>
+                    <select class="form-select role-select" data-person="${i}" ${disabledAttr} name="p${i}_role">
+                        <option value="Alleged Perpetrator">Alleged Perpetrator</option>
+                        <option value="Alleged Victim">Alleged Victim</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row dense">
+                <div class="form-group">
                     <label>First Name</label>
                     <input type="text" placeholder="First Name" ${disabledAttr} name="p${i}_fname">
                 </div>
@@ -353,15 +385,6 @@ function getPersonHTML(i, isViewOnly = false) {
                 <div class="form-group">
                     <label>Date of Birth</label>
                     <input type="date" ${disabledAttr} name="p${i}_dob">
-                </div>
-            </div>
-            <div class="form-row dense">
-                <div class="form-group">
-                    <label>Role</label>
-                    <select class="form-select role-select" data-person="${i}" ${disabledAttr} name="p${i}_role">
-                        <option value="Alleged Perpetrator">Alleged Perpetrator</option>
-                        <option value="Alleged Victim">Alleged Victim</option>
-                    </select>
                 </div>
             </div>
             
@@ -511,6 +534,7 @@ async function refreshRecordStatus(reference, runid, btn) {
 function viewRecord(reference) {
     const record = cachedRecords.find(r => r.reference === reference);
     if (!record) return;
+    currentViewedRecord = record; // Store for duplication
 
     // 1. Setup Header
     const refDisplay = document.getElementById('view-ref-display');
@@ -619,7 +643,7 @@ function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-function generatePersonFields(count) {
+function generatePersonFields(count, data = null) {
     personFieldsContainer.innerHTML = '';
     // Clear selections to prevent stale data
     for (const key in personSelections) delete personSelections[key];
@@ -638,20 +662,46 @@ function generatePersonFields(count) {
         const r_sel = sectionEl.querySelector('.role-select');
         const v_flds = document.getElementById(`${baseId}-victim-fields`);
 
-        // Pre-fill defaults for Person 1 and 2
-        if (i === 1) {
-            f_inp.value = 'Edmun';
-            l_inp.value = 'Gene';
-            g_sel.value = 'Male';
-            d_inp.value = '2020-01-21';
-            r_sel.value = 'Alleged Victim';
-            if (v_flds) v_flds.classList.remove('hidden');
-        } else if (i === 2) {
-            f_inp.value = 'Monty';
-            l_inp.value = 'Norris';
-            g_sel.value = 'Female';
-            d_inp.value = '1990-05-29';
-            r_sel.value = 'Alleged Perpetrator';
+        if (data && data[`person${i}`]) {
+            // DUPLICATION MODE: Use existing data
+            const p = data[`person${i}`];
+            f_inp.value = p.first_name || '';
+            l_inp.value = p.last_name || '';
+            g_sel.value = p.gender || 'Male';
+            d_inp.value = formatDateForInput(p.dob);
+            r_sel.value = p.role || 'Alleged Perpetrator';
+
+            if (p.role === 'Alleged Victim' && v_flds) {
+                v_flds.classList.remove('hidden');
+            }
+
+            // Populate multi-selects from data
+            ['classification', 'sexual_abuse', 'physical_abuse', 'perpetrator'].forEach(field => {
+                const rawVal = p[field === 'sexual_abuse' ? 'sexual' : (field === 'physical_abuse' ? 'physical' : field)];
+                if (rawVal) {
+                    personSelections[`${baseId}_${field}`] = rawVal.split(', ');
+                    updateMultiDisplay(baseId, field);
+                }
+            });
+        } else {
+            // NORMAL MODE: Randomly pre-fill names and gender
+            f_inp.value = getRandomName();
+            l_inp.value = getRandomName();
+            g_sel.value = Math.random() > 0.5 ? 'Male' : 'Female';
+
+            // Specific defaults for Person 1 and 2 roles
+            if (i === 1) {
+                r_sel.value = 'Alleged Victim';
+                d_inp.value = getRandomDOB(0, 16);
+                if (v_flds) v_flds.classList.remove('hidden');
+            } else if (i === 2) {
+                r_sel.value = 'Alleged Perpetrator';
+                d_inp.value = getRandomDOB(20, 50);
+            } else {
+                // Default for others
+                r_sel.value = 'Alleged Perpetrator';
+                d_inp.value = getRandomDOB(20, 50);
+            }
         }
 
         // Add reactive listeners for dynamic perpetrator list
@@ -662,26 +712,59 @@ function generatePersonFields(count) {
             const vf = document.getElementById(`${baseId}-victim-fields`);
             if (e.target.value === 'Alleged Victim') {
                 if (vf) vf.classList.remove('hidden');
+                d_inp.value = getRandomDOB(0, 16);
             } else {
                 if (vf) vf.classList.add('hidden');
+                d_inp.value = getRandomDOB(20, 50);
             }
             updateTrigger();
         });
     }
 
-    // Set multi-select defaults for Person 1 (Victim)
-    if (count >= 1) {
+    // Only auto-link Person 1 to Person 2 if NOT in duplication mode (already linked by data)
+    if (!data && count >= 2) {
         selectMultiItem('add-p1', 'classification', 'Hospital');
         selectMultiItem('add-p1', 'sexual_abuse', 'Sexual Assault');
         selectMultiItem('add-p1', 'physical_abuse', 'Extreme Pain');
+        refreshPerpetratorLists();
+        const p2fname = addView.querySelector('input[name="p2_fname"]')?.value || '';
+        const p2lname = addView.querySelector('input[name="p2_lname"]')?.value || '';
+        const p2name = `${p2fname} ${p2lname}`.trim();
+        if (p2name) {
+            selectMultiItem('add-p1', 'perpetrator', p2name);
+        }
+    } else if (data) {
+        refreshPerpetratorLists(); // Refresh names list but don't force select
+    }
+}
+
+/**
+ * Handle Record Duplication
+ */
+function handleDuplicate() {
+    if (!currentViewedRecord) return;
+
+    // 1. Gather Data
+    let persons = {};
+    try {
+        persons = JSON.parse(currentViewedRecord.personsdata || '{}');
+    } catch (e) {
+        console.error('JSON Parse Error:', e);
+        return;
     }
 
-    refreshPerpetratorLists();
+    const count = Object.keys(persons).length;
 
-    // Select default perpetrator for Person 1 after options are available
-    if (count >= 2) {
-        selectMultiItem('add-p1', 'perpetrator', 'Monty Norris');
-    }
+    // 2. Prepare Add Screen
+    switchView('add');
+
+    // 3. Set Global Fields
+    document.getElementById('portal').value = currentViewedRecord.portal || 'InternalQA';
+    document.getElementById('level').value = currentViewedRecord.level || 'CWS Assessment';
+    numPersonsSelect.value = count;
+
+    // 4. Generate & Populate Fields
+    generatePersonFields(count, persons);
 }
 
 /**
