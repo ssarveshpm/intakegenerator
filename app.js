@@ -2,7 +2,7 @@
  * Premium Frontend Logic for Login and Auth Management
  */
 
-const API_URL = "https://script.google.com/macros/s/AKfycbx3vWdDrrLW-zor-GSWcr0tf7jXaJbc4XUXQ1QWeMId1YUJ87ME7wVNCte7V6-IUq-s/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbzEgxUJt8TKnowagUdUbRRGaKFuqGX6w2CAHjgVamjrG7HV6quDrpZcCf8m4cLyHkAa/exec";
 
 const AUTO_NAMES = ["Liam", "Olivia", "Noah", "Emma", "Mason", "Ava", "Ethan", "Sophia", "Lucas", "Isabella", "James", "Mia", "Benjamin", "Charlotte", "Elijah", "Amelia", "Logan", "Harper", "Alexander", "Evelyn", "Daniel", "Abigail", "Matthew", "Ella", "Joseph", "Scarlett", "David", "Victoria", "Samuel", "Grace", "Henry", "Chloe", "Jackson", "Lily", "Sebastian", "Hannah", "Jack", "Zoey", "Owen", "Penelope", "Wyatt", "Layla", "Gabriel", "Nora", "Carter", "Riley", "Jayden", "Stella", "Luke", "Ellie", "Julian", "Aria", "Levi", "Natalie", "Isaac", "Aurora", "Anthony", "Savannah", "Dylan", "Claire", "Thomas", "Skylar", "Charles", "Lucy", "Christopher", "Violet", "Joshua", "Hazel", "Andrew", "Brooklyn", "Ryan", "Addison", "Nathan", "Paisley", "Aaron", "Bella", "Caleb", "Madeline", "Christian", "Naomi", "Jonathan", "Kennedy", "Isaiah", "Ariana", "Hunter", "Piper", "Eli", "Delilah", "Connor", "Sadie", "Landon", "Julia", "Adrian", "Alice", "Robert", "Everly", "Kevin", "Ruby", "Brandon", "Daisy"];
 
@@ -47,6 +47,8 @@ let cachedRecords = [];
 let currentLogRef = '';
 let currentLogRunId = '';
 let currentViewedRecord = null; // Track current record for duplication
+let currentPage = 1;
+const recordsPerPage = 20;
 
 /**
  * Initialize components and check auth status
@@ -243,11 +245,14 @@ function switchView(viewId) {
     else if (viewId === 'logs') target = logsView;
 
     if (target) {
-        target.style.display = (viewId === 'login' ? 'block' : 'flex');
+        target.style.display = 'flex';
         target.classList.remove('hidden');
 
         // Post-switch logic
-        if (viewId === 'dashboard') renderGrid();
+        if (viewId === 'dashboard') {
+            currentPage = 1; // Reset to page 1 when going to dashboard
+            renderGrid(1);
+        }
         if (viewId === 'add') generatePersonFields(parseInt(numPersonsSelect.value));
     }
 }
@@ -255,9 +260,11 @@ function switchView(viewId) {
 /**
  * Renders the dashboard grid with live data from the backend
  */
-async function renderGrid() {
+async function renderGrid(page = 1) {
     const gridBody = document.getElementById('grid-body');
     if (!gridBody) return;
+
+    currentPage = page;
 
     // Show loading state
     gridBody.innerHTML = `
@@ -273,7 +280,7 @@ async function renderGrid() {
     const token = localStorage.getItem('authToken');
 
     try {
-        const url = `${API_URL}?action=fetchRecords&username=${encodeURIComponent(username)}&role=${encodeURIComponent(role)}&token=${encodeURIComponent(token)}`;
+        const url = `${API_URL}?action=fetchRecords&username=${encodeURIComponent(username)}&role=${encodeURIComponent(role)}&token=${encodeURIComponent(token)}&page=${page}&pageSize=${recordsPerPage}`;
         const response = await fetch(url);
         const result = await response.json();
 
@@ -288,6 +295,7 @@ async function renderGrid() {
                         </td>
                     </tr>
                 `;
+                document.getElementById('pagination-container').innerHTML = '';
                 return;
             }
 
@@ -321,6 +329,10 @@ async function renderGrid() {
                     </td>
                 </tr>
             `).join('');
+
+            // NEW: Render pagination controls
+            renderPagination(result.totalPages, result.currentPage, result.totalCount);
+
         } else {
             if (result.message && result.message.toLowerCase().includes('token')) {
                 handleAuthError(result.message);
@@ -713,6 +725,16 @@ function generatePersonFields(count, data = null) {
             if (e.target.value === 'Alleged Victim') {
                 if (vf) vf.classList.remove('hidden');
                 d_inp.value = getRandomDOB(0, 16);
+                // Auto-populate default fields for victims
+                selectMultiItem(baseId, 'classification', 'Hospital');
+                selectMultiItem(baseId, 'sexual_abuse', 'Sexual Assault');
+                selectMultiItem(baseId, 'physical_abuse', 'Extreme Pain');
+
+                // NEW: Auto-populate perpetrator with first available value
+                const perps = refreshPerpetratorLists();
+                if (perps.length > 0) {
+                    selectMultiItem(baseId, 'perpetrator', perps[0]);
+                }
             } else {
                 if (vf) vf.classList.add('hidden');
                 d_inp.value = getRandomDOB(20, 50);
@@ -721,20 +743,22 @@ function generatePersonFields(count, data = null) {
         });
     }
 
-    // Only auto-link Person 1 to Person 2 if NOT in duplication mode (already linked by data)
-    if (!data && count >= 2) {
-        selectMultiItem('add-p1', 'classification', 'Hospital');
-        selectMultiItem('add-p1', 'sexual_abuse', 'Sexual Assault');
-        selectMultiItem('add-p1', 'physical_abuse', 'Extreme Pain');
-        refreshPerpetratorLists();
-        const p2fname = addView.querySelector('input[name="p2_fname"]')?.value || '';
-        const p2lname = addView.querySelector('input[name="p2_lname"]')?.value || '';
-        const p2name = `${p2fname} ${p2lname}`.trim();
-        if (p2name) {
-            selectMultiItem('add-p1', 'perpetrator', p2name);
+    // NEW: Auto-link Victims to the first available Perpetrator by default
+    if (!data) {
+        const perps = refreshPerpetratorLists();
+        for (let i = 1; i <= count; i++) {
+            const r_val = addView.querySelector(`select[name="p${i}_role"]`)?.value;
+            if (r_val === 'Alleged Victim' && perps.length > 0) {
+                // Ensure default victim fields are set
+                selectMultiItem(`add-p${i}`, 'classification', 'Hospital');
+                selectMultiItem(`add-p${i}`, 'sexual_abuse', 'Sexual Assault');
+                selectMultiItem(`add-p${i}`, 'physical_abuse', 'Extreme Pain');
+                // Auto-select the first perpetrator found
+                selectMultiItem(`add-p${i}`, 'perpetrator', perps[0]);
+            }
         }
-    } else if (data) {
-        refreshPerpetratorLists(); // Refresh names list but don't force select
+    } else {
+        refreshPerpetratorLists(); // Refresh names list in duplication mode but don't force select
     }
 }
 
@@ -797,6 +821,7 @@ function refreshPerpetratorLists() {
 
         updateMultiDisplay(baseId, 'perpetrator');
     }
+    return perpNames;
 }
 
 /**
@@ -1012,4 +1037,52 @@ function toggleLoading(isLoading) {
     loginLoader.style.display = isLoading ? 'block' : 'none';
     const span = loginBtn.querySelector('span');
     if (span) span.style.display = isLoading ? 'none' : 'inline';
+}
+/**
+ * Renders the pagination controls
+ */
+function renderPagination(totalPages, currentPage, totalCount) {
+    const container = document.getElementById('pagination-container');
+    if (!container) return;
+
+    if (totalPages <= 1) {
+        container.innerHTML = `<div class="pagination-info">Showing all ${totalCount} records</div>`;
+        return;
+    }
+
+    let html = `
+        <button class="pagination-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="renderGrid(${currentPage - 1})">
+            &larr; Prev
+        </button>
+    `;
+
+    // Always show first page
+    html += `<button class="pagination-btn ${currentPage === 1 ? 'active' : ''}" onclick="renderGrid(1)">1</button>`;
+
+    if (currentPage > 3) {
+        html += `<span class="pagination-info">...</span>`;
+    }
+
+    // Show pages around current
+    for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) {
+        html += `<button class="pagination-btn ${currentPage === i ? 'active' : ''}" onclick="renderGrid(${i})">${i}</button>`;
+    }
+
+    if (currentPage < totalPages - 2) {
+        html += `<span class="pagination-info">...</span>`;
+    }
+
+    // Always show last page
+    if (totalPages > 1) {
+        html += `<button class="pagination-btn ${currentPage === totalPages ? 'active' : ''}" onclick="renderGrid(${totalPages})">${totalPages}</button>`;
+    }
+
+    html += `
+        <button class="pagination-btn" ${currentPage === totalPages ? 'disabled' : ''} onclick="renderGrid(${currentPage + 1})">
+            Next &rarr;
+        </button>
+        <div class="pagination-info">Total: ${totalCount} records</div>
+    `;
+
+    container.innerHTML = html;
 }

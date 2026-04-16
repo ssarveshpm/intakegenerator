@@ -1,14 +1,14 @@
 :root {
     --primary: #818cf8;
     --primary-hover: #6366f1;
-    --bg-body: #1e293b;
-    --bg-card: #334155;
-    --text-main: #f8fafc;
-    --text-muted: #94a3b8;
+    --bg-body: #0f172a;
+    --bg-card: rgba(30, 41, 59, 0.7);
+    --text-main: #f1f5f9;
+    --text-muted: #cbd5e1;
     --error: #f43f5e;
     --success: #10b981;
-    --border: rgba(255, 255, 255, 0.1);
-    --glass-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+    --border: rgba(255, 255, 255, 0.15);
+    --glass-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
 }
 
 * {
@@ -18,30 +18,181 @@
 }
 
 body {
-    font-family: 'Inter', sans-serif;
-    background: var(--bg-body);
+    font-family: 'Lexend', sans-serif;
+    background: transparent;
     color: var(--text-main);
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    /* Changed from center to allow views to start at top */
     overflow-x: hidden;
     padding: 20px;
+    line-height: 1.6;
+}
+
+.login-bg {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    z-index: -1;
+}
+
+.login-bg.loaded {
+    opacity: 1;
+}
+
+.login-bg-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+.login-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        135deg,
+        rgba(10, 8, 18, 0.75) 0%,
+        rgba(15, 23, 42, 0.65) 50%,
+        rgba(10, 8, 18, 0.85) 100%
+    );
+}
+
+.login-card-wrap {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    z-index: 10;
+}
+
+.login-brand-fix {
+    margin-bottom: 8px;
+}
+
+.login-brand-fix .nav-logo {
+    font-size: 13px;
+    padding: 4px 10px;
+}
+
+.login-brand-fix .nav-title {
+    font-size: 16px;
+}
+
+.login-card {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 20px;
+    padding: 32px 28px;
+    width: 300px;
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255,255,255,0.08);
+}
+
+.login-card input {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 12px;
+    padding: 13px 16px;
+    color: #f8fafc;
+    font-size: 14px;
+    font-family: 'Lexend', sans-serif;
+    transition: all 0.25s ease;
+    outline: none;
+}
+
+.login-card input::placeholder {
+    color: rgba(255,255,255,0.3);
+}
+
+.login-card input:focus {
+    border-color: rgba(129, 140, 248, 0.7);
+    background: rgba(129, 140, 248, 0.08);
+    box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.15);
+}
+
+.login-card .btn {
+    margin-top: 4px;
+    background: var(--primary);
+    font-size: 14px;
+    padding: 13px;
+    border-radius: 12px;
+    letter-spacing: 0.02em;
+}
+
+.login-card .btn:hover {
+    background: var(--primary-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.45);
+}
+
+.login-card .error-msg {
+    font-size: 12px;
+    margin: 0;
+    min-height: 0;
+}
+
+.login-card .error-msg:empty {
+    display: none;
 }
 
 .auth-container {
     width: 100%;
     max-width: 400px;
-    padding: 20px;
     animation: fadeIn 0.8s ease-out;
+}
+
+@media (max-width: 600px) {
+    #login-view {
+        justify-content: center;
+        padding-right: 0;
+    }
+    .login-card {
+        width: 280px;
+    }
+}
+
+#app {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    position: relative;
 }
 
 .view {
     display: none;
     flex-direction: column;
     width: 100%;
+    min-width: 100%; /* Ensure it stays wide even if empty */
     animation: fadeIn 0.4s ease-out;
+}
+
+#login-view {
+    display: flex;    /* visible immediately — JS inline style overrides when switching views */
+    flex-direction: row;
+    position: fixed !important;
+    inset: 0;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    animation: none; 
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 7%;
 }
 
 .auth-card {
@@ -149,20 +300,46 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 16px 24px;
-    background: var(--bg-card);
+    background: rgba(30, 41, 59, 0.75);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     border: 1px solid var(--border);
     border-radius: 16px;
     margin-bottom: 32px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
 }
 
 .nav-brand {
-    font-weight: 700;
-    font-size: 20px;
-    background: linear-gradient(to right, #818cf8, #c084fc);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.nav-logo {
+    background: linear-gradient(135deg, var(--primary), #c084fc);
+    color: white;
+    font-weight: 800;
+    font-size: 14px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    letter-spacing: 0.05em;
+    box-shadow: 0 0 15px rgba(129, 140, 248, 0.4);
+}
+
+.nav-title {
+    font-weight: 600;
+    font-size: 18px;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.nav-subtitle {
+    color: var(--text-muted);
+    font-weight: 400;
+    font-size: 14px;
+    opacity: 0.8;
 }
 
 .nav-user {
@@ -239,7 +416,9 @@ body {
 
 /* Grid Styling */
 .grid-container {
-    background: var(--bg-card);
+    background: rgba(15, 23, 42, 0.75);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     border: 1px solid var(--border);
     border-radius: 20px;
     overflow: hidden;
@@ -254,12 +433,12 @@ body {
 }
 
 .data-grid th {
-    background: #1e293b;
+    background: rgba(30, 41, 59, 0.6);
     padding: 16px;
     color: var(--text-muted);
     font-weight: 600;
     text-transform: uppercase;
-    font-size: 11px;
+    font-size: 13px;
     letter-spacing: 0.05em;
     border-bottom: 1px solid var(--border);
 }
@@ -278,7 +457,9 @@ body {
 
 /* Form Styling */
 .form-card {
-    background: var(--bg-card);
+    background: rgba(30, 41, 59, 0.75);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     border: 1px solid var(--border);
     border-radius: 24px;
     padding: 40px;
@@ -723,14 +904,16 @@ body {
 
 /* Log View Styles */
 .log-card {
-    background: #0f172a;
-    /* Deeper dark for terminal */
+    background: rgba(15, 23, 42, 0.7);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     border: 1px solid var(--border);
-    border-radius: 12px;
+    border-radius: 20px;
     padding: 24px;
     height: 70vh;
     display: flex;
     flex-direction: column;
+    box-shadow: var(--glass-shadow);
 }
 
 .log-terminal {
@@ -775,4 +958,58 @@ body {
 .log-message {
     color: #e2e8f0;
     flex-grow: 1;
+}
+
+/* Pagination Styling */
+.pagination-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 24px;
+    padding: 16px;
+}
+
+.pagination-btn {
+    min-width: 40px;
+    height: 40px;
+    padding: 0 12px;
+    border-radius: 10px;
+    background: rgba(51, 65, 85, 0.4);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pagination-btn:hover:not(:disabled) {
+    border-color: var(--primary);
+    color: var(--primary);
+    transform: translateY(-2px);
+    background: rgba(129, 140, 248, 0.05);
+}
+
+.pagination-btn.active {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+.pagination-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.pagination-info {
+    color: var(--text-muted);
+    font-size: 13px;
+    margin: 0 16px;
 }
