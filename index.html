@@ -6,44 +6,71 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SRV Intake Generator</title>
     <link rel="icon" type="image/svg+xml"
-        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cpath fill='%231c65e3' d='M64 64c0-17.7-14.3-32-32-32S0 46.3 0 64L0 400c0 44.2 35.8 80 80 80l400 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L80 416c-8.8 0-16-7.2-16-16L64 64zm406.6 86.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L320 210.7 262.6 153.4c-12.5-12.5-32.8-12.5-45.3 0l-96 96c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l73.4-73.4 57.4 57.4c12.5 12.5 32.8 12.5 45.3 0l128-128z'/%3E%3C/svg%3E">
+        href="data:image/svg+xml,%3Csvg id='Layer_1' data-name='Layer 1' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48' fill='%23818cf8'%3E%3Cpath d='m35,14h-10v-5.163c1.442-.432,2.5-1.754,2.5-3.337,0-1.933-1.567-3.5-3.5-3.5s-3.5,1.567-3.5,3.5c0,1.583,1.058,2.905,2.5,3.337v5.163h-10c-3.314,0-6,2.686-6,6v19c0,3.314,2.686,6,6,6h22c3.314,0,6-2.686,6-6v-19c0-3.314-2.686-6-6-6Zm-21,11.5c0-1.933,1.567-3.5,3.5-3.5s3.5,1.567,3.5,3.5-1.567,3.5-3.5,3.5-3.5-1.567-3.5-3.5Zm16.457,10.949c-1.975,1.015-4.208,1.551-6.457,1.551s-4.482-.536-6.457-1.551c-.491-.253-.685-.855-.433-1.347.252-.49.854-.685,1.347-.433,3.435,1.766,7.651,1.766,11.086,0,.491-.252,1.094-.058,1.347.433.252.491.059,1.094-.433,1.347Zm.043-7.449c-1.933,0-3.5-1.567-3.5-3.5s1.567-3.5,3.5-3.5,3.5,1.567,3.5,3.5-1.567,3.5-3.5,3.5Z'%3E%3C/path%3E%3Ccircle cx='30.5' cy='25.5' r='1.5'%3E%3C/circle%3E%3Ccircle cx='17.5' cy='25.5' r='1.5'%3E%3C/circle%3E%3Cpath d='m44,23h-1v13h1c1.657,0,3-1.343,3-3v-7c0-1.657-1.343-3-3-3Z'%3E%3C/path%3E%3Cpath d='m5,23h-1c-1.657,0-3,1.343-3,3v7c0,1.657,1.343,3,3,3h1v-13Z'%3E%3C/path%3E%3C/svg%3E">
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
 </head>
 
 <body>
     <div id="app">
         <!-- Global Background -->
         <div class="login-bg" id="login-bg">
-            <img src="robo.svg" alt="" class="login-bg-svg" onload="document.getElementById('login-bg').classList.add('loaded')">
+            <img src="robo.svg" alt="" class="login-bg-svg"
+                onload="document.getElementById('login-bg').classList.add('loaded')">
             <div class="login-overlay"></div>
         </div>
 
         <!-- Login View -->
         <div id="login-view" class="view">
-                <div class="login-card-wrap">
-                    <div class="nav-brand login-brand-fix">
-                        <div class="nav-logo">SRV</div>
-                        <div class="nav-title">Intake Generator</div>
+            <div class="login-card-wrap">
+                <div class="nav-brand login-brand-fix">
+                    <div class="nav-logo">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" class="logo-svg">
+                            <path
+                                d="m35,14h-10v-5.163c1.442-.432,2.5-1.754,2.5-3.337,0-1.933-1.567-3.5-3.5-3.5s-3.5,1.567-3.5,3.5c0,1.583,1.058,2.905,2.5,3.337v5.163h-10c-3.314,0-6,2.686-6,6v19c0,3.314,2.686,6,6,6h22c3.314,0,6-2.686,6-6v-19c0-3.314-2.686-6-6-6Zm-21,11.5c0-1.933,1.567-3.5,3.5-3.5s3.5,1.567,3.5,3.5-1.567,3.5-3.5,3.5-3.5-1.567-3.5-3.5Zm16.457,10.949c-1.975,1.015-4.208,1.551-6.457,1.551s-4.482-.536-6.457-1.551c-.491-.253-.685-.855-.433-1.347.252-.49.854-.685,1.347-.433,3.435,1.766,7.651,1.766,11.086,0,.491-.252,1.094-.058,1.347.433.252.491.059,1.094-.433,1.347Zm.043-7.449c-1.933,0-3.5-1.567-3.5-3.5s1.567-3.5,3.5-3.5,3.5,1.567,3.5,3.5-1.567,3.5-3.5,3.5Z"
+                                fill="currentColor"></path>
+                            <circle cx="30.5" cy="25.5" r="1.5" fill="currentColor"></circle>
+                            <circle cx="17.5" cy="25.5" r="1.5" fill="currentColor"></circle>
+                            <path d="m44,23h-1v13h1c1.657,0,3-1.343,3-3v-7c0-1.657-1.343-3-3-3Z" fill="currentColor">
+                            </path>
+                            <path d="m5,23h-1c-1.657,0-3,1.343-3,3v7c0,1.657,1.343,3,3,3h1v-13Z" fill="currentColor">
+                            </path>
+                        </svg>
                     </div>
-                    <form id="login-form" class="login-card">
-                        <input type="text" id="username" placeholder="Username" autocomplete="username" required>
-                        <input type="password" id="password" placeholder="Password" autocomplete="current-password" required>
-                        <div id="login-error" class="error-msg"></div>
-                        <button type="submit" id="login-btn" class="btn btn-primary">
-                            <span>Login</span>
-                            <div class="loader" id="login-loader" style="display: none;"></div>
-                        </button>
-                    </form>
+                    <div class="nav-title">SRV Intake Generator</div>
                 </div>
+                <form id="login-form" class="login-card">
+                    <input type="text" id="username" placeholder="Username" autocomplete="username" required>
+                    <input type="password" id="password" placeholder="Password" autocomplete="current-password"
+                        required>
+                    <div id="login-error" class="error-msg"></div>
+                    <button type="submit" id="login-btn" class="btn btn-primary">
+                        <span>Login</span>
+                        <div class="loader" id="login-loader" style="display: none;"></div>
+                    </button>
+                </form>
+            </div>
         </div>
 
         <!-- Dashboard View -->
         <div id="dashboard-view" class="view" style="display: none;">
             <nav class="navbar">
                 <div class="nav-brand">
-                    <div class="nav-logo">SRV</div>
-                    <div class="nav-title">Intake Generator</div>
+                    <div class="nav-logo">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" class="logo-svg">
+                            <path
+                                d="m35,14h-10v-5.163c1.442-.432,2.5-1.754,2.5-3.337,0-1.933-1.567-3.5-3.5-3.5s-3.5,1.567-3.5,3.5c0,1.583,1.058,2.905,2.5,3.337v5.163h-10c-3.314,0-6,2.686-6,6v19c0,3.314,2.686,6,6,6h22c3.314,0,6-2.686,6-6v-19c0-3.314-2.686-6-6-6Zm-21,11.5c0-1.933,1.567-3.5,3.5-3.5s3.5,1.567,3.5,3.5-1.567,3.5-3.5,3.5-3.5-1.567-3.5-3.5Zm16.457,10.949c-1.975,1.015-4.208,1.551-6.457,1.551s-4.482-.536-6.457-1.551c-.491-.253-.685-.855-.433-1.347.252-.49.854-.685,1.347-.433,3.435,1.766,7.651,1.766,11.086,0,.491-.252,1.094-.058,1.347.433.252.491.059,1.094-.433,1.347Zm.043-7.449c-1.933,0-3.5-1.567-3.5-3.5s1.567-3.5,3.5-3.5,3.5,1.567,3.5,3.5-1.567,3.5-3.5,3.5Z"
+                                fill="currentColor"></path>
+                            <circle cx="30.5" cy="25.5" r="1.5" fill="currentColor"></circle>
+                            <circle cx="17.5" cy="25.5" r="1.5" fill="currentColor"></circle>
+                            <path d="m44,23h-1v13h1c1.657,0,3-1.343,3-3v-7c0-1.657-1.343-3-3-3Z" fill="currentColor">
+                            </path>
+                            <path d="m5,23h-1c-1.657,0-3,1.343-3,3v7c0,1.657,1.343,3,3,3h1v-13Z" fill="currentColor">
+                            </path>
+                        </svg>
+                    </div>
+                    <div class="nav-title">SRV Intake Generator</div>
                 </div>
                 <div class="nav-user">
                     <span id="user-display">User Name</span>
@@ -94,8 +121,20 @@
         <section id="view-record-view" class="view section hidden">
             <nav class="navbar">
                 <div class="nav-brand">
-                    <div class="nav-logo">SRV</div>
-                    <div class="nav-title">Intake Generator <span class="nav-subtitle">/ View Record</span></div>
+                    <div class="nav-logo">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" class="logo-svg">
+                            <path
+                                d="m35,14h-10v-5.163c1.442-.432,2.5-1.754,2.5-3.337,0-1.933-1.567-3.5-3.5-3.5s-3.5,1.567-3.5,3.5c0,1.583,1.058,2.905,2.5,3.337v5.163h-10c-3.314,0-6,2.686-6,6v19c0,3.314,2.686,6,6,6h22c3.314,0,6-2.686,6-6v-19c0-3.314-2.686-6-6-6Zm-21,11.5c0-1.933,1.567-3.5,3.5-3.5s3.5,1.567,3.5,3.5-1.567,3.5-3.5,3.5-3.5-1.567-3.5-3.5Zm16.457,10.949c-1.975,1.015-4.208,1.551-6.457,1.551s-4.482-.536-6.457-1.551c-.491-.253-.685-.855-.433-1.347.252-.49.854-.685,1.347-.433,3.435,1.766,7.651,1.766,11.086,0,.491-.252,1.094-.058,1.347.433.252.491.059,1.094-.433,1.347Zm.043-7.449c-1.933,0-3.5-1.567-3.5-3.5s1.567-3.5,3.5-3.5,3.5,1.567,3.5,3.5-1.567,3.5-3.5,3.5Z"
+                                fill="currentColor"></path>
+                            <circle cx="30.5" cy="25.5" r="1.5" fill="currentColor"></circle>
+                            <circle cx="17.5" cy="25.5" r="1.5" fill="currentColor"></circle>
+                            <path d="m44,23h-1v13h1c1.657,0,3-1.343,3-3v-7c0-1.657-1.343-3-3-3Z" fill="currentColor">
+                            </path>
+                            <path d="m5,23h-1c-1.657,0-3,1.343-3,3v7c0,1.657,1.343,3,3,3h1v-13Z" fill="currentColor">
+                            </path>
+                        </svg>
+                    </div>
+                    <div class="nav-title">SRV Intake Generator <span class="nav-subtitle">/ View Record</span></div>
                 </div>
                 <div class="nav-user" style="display: flex; gap: 8px;">
                     <button class="btn btn-outline btn-sm" id="view-duplicate-btn-top">Duplicate</button>
@@ -126,7 +165,8 @@
                         <button class="btn btn-primary back-to-dash" style="width: auto; padding: 12px 40px;">
                             Back to Dashboard
                         </button>
-                        <button id="view-duplicate-btn-bottom" class="btn btn-outline" style="width: auto; padding: 12px 40px; border: 1px solid var(--primary); color: var(--primary);">
+                        <button id="view-duplicate-btn-bottom" class="btn btn-outline"
+                            style="width: auto; padding: 12px 40px; border: 1px solid var(--primary); color: var(--primary);">
                             Duplicate Record
                         </button>
                     </div>
@@ -138,8 +178,20 @@
         <section id="logs-view" class="view section hidden">
             <nav class="navbar">
                 <div class="nav-brand">
-                    <div class="nav-logo">SRV</div>
-                    <div class="nav-title">Intake Generator <span class="nav-subtitle">/ Execution Logs</span></div>
+                    <div class="nav-logo">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" class="logo-svg">
+                            <path
+                                d="m35,14h-10v-5.163c1.442-.432,2.5-1.754,2.5-3.337,0-1.933-1.567-3.5-3.5-3.5s-3.5,1.567-3.5,3.5c0,1.583,1.058,2.905,2.5,3.337v5.163h-10c-3.314,0-6,2.686-6,6v19c0,3.314,2.686,6,6,6h22c3.314,0,6-2.686,6-6v-19c0-3.314-2.686-6-6-6Zm-21,11.5c0-1.933,1.567-3.5,3.5-3.5s3.5,1.567,3.5,3.5-1.567,3.5-3.5,3.5-3.5-1.567-3.5-3.5Zm16.457,10.949c-1.975,1.015-4.208,1.551-6.457,1.551s-4.482-.536-6.457-1.551c-.491-.253-.685-.855-.433-1.347.252-.49.854-.685,1.347-.433,3.435,1.766,7.651,1.766,11.086,0,.491-.252,1.094-.058,1.347.433.252.491.059,1.094-.433,1.347Zm.043-7.449c-1.933,0-3.5-1.567-3.5-3.5s1.567-3.5,3.5-3.5,3.5,1.567,3.5,3.5-1.567,3.5-3.5,3.5Z"
+                                fill="currentColor"></path>
+                            <circle cx="30.5" cy="25.5" r="1.5" fill="currentColor"></circle>
+                            <circle cx="17.5" cy="25.5" r="1.5" fill="currentColor"></circle>
+                            <path d="m44,23h-1v13h1c1.657,0,3-1.343,3-3v-7c0-1.657-1.343-3-3-3Z" fill="currentColor">
+                            </path>
+                            <path d="m5,23h-1c-1.657,0-3,1.343-3,3v7c0,1.657,1.343,3,3,3h1v-13Z" fill="currentColor">
+                            </path>
+                        </svg>
+                    </div>
+                    <div class="nav-title">SRV Intake Generator <span class="nav-subtitle">/ Execution Logs</span></div>
                 </div>
                 <div class="nav-user">
                     <button class="btn btn-primary btn-sm back-to-dash" style="width: auto; padding: 10px 20px;">
@@ -172,8 +224,20 @@
         <div id="add-view" class="view" style="display: none;">
             <nav class="navbar">
                 <div class="nav-brand">
-                    <div class="nav-logo">SRV</div>
-                    <div class="nav-title">Intake Generator <span class="nav-subtitle">/ New Intake</span></div>
+                    <div class="nav-logo">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" class="logo-svg">
+                            <path
+                                d="m35,14h-10v-5.163c1.442-.432,2.5-1.754,2.5-3.337,0-1.933-1.567-3.5-3.5-3.5s-3.5,1.567-3.5,3.5c0,1.583,1.058,2.905,2.5,3.337v5.163h-10c-3.314,0-6,2.686-6,6v19c0,3.314,2.686,6,6,6h22c3.314,0,6-2.686,6-6v-19c0-3.314-2.686-6-6-6Zm-21,11.5c0-1.933,1.567-3.5,3.5-3.5s3.5,1.567,3.5,3.5-1.567,3.5-3.5,3.5-3.5-1.567-3.5-3.5Zm16.457,10.949c-1.975,1.015-4.208,1.551-6.457,1.551s-4.482-.536-6.457-1.551c-.491-.253-.685-.855-.433-1.347.252-.49.854-.685,1.347-.433,3.435,1.766,7.651,1.766,11.086,0,.491-.252,1.094-.058,1.347.433.252.491.059,1.094-.433,1.347Zm.043-7.449c-1.933,0-3.5-1.567-3.5-3.5s1.567-3.5,3.5-3.5,3.5,1.567,3.5,3.5-1.567,3.5-3.5,3.5Z"
+                                fill="currentColor"></path>
+                            <circle cx="30.5" cy="25.5" r="1.5" fill="currentColor"></circle>
+                            <circle cx="17.5" cy="25.5" r="1.5" fill="currentColor"></circle>
+                            <path d="m44,23h-1v13h1c1.657,0,3-1.343,3-3v-7c0-1.657-1.343-3-3-3Z" fill="currentColor">
+                            </path>
+                            <path d="m5,23h-1c-1.657,0-3,1.343-3,3v7c0,1.657,1.343,3,3,3h1v-13Z" fill="currentColor">
+                            </path>
+                        </svg>
+                    </div>
+                    <div class="nav-title">SRV Intake Generator <span class="nav-subtitle">/ New Intake</span></div>
                 </div>
                 <div class="nav-user">
                     <button id="back-btn" class="btn btn-outline btn-sm">Back to Dashboard</button>

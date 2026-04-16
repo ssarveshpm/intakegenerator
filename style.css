@@ -57,12 +57,10 @@ body {
 .login-overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(
-        135deg,
-        rgba(10, 8, 18, 0.75) 0%,
-        rgba(15, 23, 42, 0.65) 50%,
-        rgba(10, 8, 18, 0.85) 100%
-    );
+    background: linear-gradient(135deg,
+            rgba(10, 8, 18, 0.75) 0%,
+            rgba(15, 23, 42, 0.65) 50%,
+            rgba(10, 8, 18, 0.85) 100%);
 }
 
 .login-card-wrap {
@@ -79,8 +77,9 @@ body {
 }
 
 .login-brand-fix .nav-logo {
-    font-size: 13px;
-    padding: 4px 10px;
+    width: 32px;
+    height: 32px;
+    padding: 5px;
 }
 
 .login-brand-fix .nav-title {
@@ -98,7 +97,7 @@ body {
     border-radius: 20px;
     padding: 32px 28px;
     width: 300px;
-    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255,255,255,0.08);
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 .login-card input {
@@ -115,7 +114,7 @@ body {
 }
 
 .login-card input::placeholder {
-    color: rgba(255,255,255,0.3);
+    color: rgba(255, 255, 255, 0.3);
 }
 
 .login-card input:focus {
@@ -160,6 +159,7 @@ body {
         justify-content: center;
         padding-right: 0;
     }
+
     .login-card {
         width: 280px;
     }
@@ -176,12 +176,14 @@ body {
     display: none;
     flex-direction: column;
     width: 100%;
-    min-width: 100%; /* Ensure it stays wide even if empty */
+    min-width: 100%;
+    /* Ensure it stays wide even if empty */
     animation: fadeIn 0.4s ease-out;
 }
 
 #login-view {
-    display: flex;    /* visible immediately — JS inline style overrides when switching views */
+    display: flex;
+    /* visible immediately — JS inline style overrides when switching views */
     flex-direction: row;
     position: fixed !important;
     inset: 0;
@@ -189,7 +191,7 @@ body {
     padding: 0;
     width: 100%;
     height: 100%;
-    animation: none; 
+    animation: none;
     align-items: center;
     justify-content: flex-end;
     padding-right: 7%;
@@ -316,14 +318,23 @@ body {
 }
 
 .nav-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
     background: linear-gradient(135deg, var(--primary), #c084fc);
     color: white;
-    font-weight: 800;
-    font-size: 14px;
-    padding: 4px 8px;
-    border-radius: 6px;
-    letter-spacing: 0.05em;
+    padding: 6px;
+    border-radius: 10px;
     box-shadow: 0 0 15px rgba(129, 140, 248, 0.4);
+    flex-shrink: 0;
+}
+
+.logo-svg {
+    width: 100%;
+    height: 100%;
+    display: block;
 }
 
 .nav-title {
