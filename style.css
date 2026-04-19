@@ -201,7 +201,6 @@ body {
 
 #app {
     width: 100%;
-    max-width: 1400px;
     margin: 0 auto;
     position: relative;
 }
@@ -417,7 +416,7 @@ body {
 
 .dashboard-content,
 .form-content {
-    max-width: 1200px;
+    max-width: none;
     margin: 0 auto;
     width: 100%;
 }
@@ -495,32 +494,53 @@ body {
 
 .data-grid {
     width: 100%;
-    min-width: 1100px; /* Force minimum width to ensure readability on smaller screens */
     border-collapse: collapse;
     text-align: left;
     font-size: 14px;
+    table-layout: auto;
 }
 
 .data-grid th,
 .data-grid td {
-    white-space: nowrap; /* Prevent awkward text wrapping in table cells */
+    white-space: normal; /* Allow wrapping for long IDs */
+    word-break: break-word;
+    padding: 12px 10px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-main);
 }
 
 .data-grid th {
     background: rgba(30, 41, 59, 0.6);
-    padding: 16px;
     color: var(--text-muted);
     font-weight: 600;
     text-transform: uppercase;
     font-size: 13px;
     letter-spacing: 0.05em;
-    border-bottom: 1px solid var(--border);
+    white-space: nowrap; /* Headers stay on one line */
 }
 
-.data-grid td {
-    padding: 16px;
-    border-bottom: 1px solid var(--border);
-    color: var(--text-main);
+/* Specific columns that should not wrap */
+.data-grid td:nth-child(1), /* Ref No */
+.data-grid td:nth-child(2), /* Date */
+.data-grid td:nth-child(7), /* Status */
+.data-grid td:nth-child(10) /* Actions */ {
+    white-space: nowrap;
+}
+
+/* Optimization for long IDs */
+.code-id {
+    display: inline-block;
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: bottom;
+    cursor: help;
+}
+
+.code-id:hover {
+    max-width: none;
+    word-break: break-all;
+    white-space: normal;
 }
 
 .empty-state {
