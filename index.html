@@ -153,11 +153,15 @@
                 <header class="form-header">
                     <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
                         <p id="view-ref-display" style="margin: 0;">Reference: SRV-0</p>
-                        <div id="view-global-details" style="display: flex; gap: 12px;">
+                        <div id="view-global-details" style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px;">
                             <span id="view-portal-display" class="badge"
                                 style="background: rgba(129, 140, 248, 0.1); color: var(--primary);">Portal: -</span>
                             <span id="view-level-display" class="badge"
                                 style="background: rgba(129, 140, 248, 0.1); color: var(--primary);">Level: -</span>
+                            <span id="view-section-display" class="badge"
+                                style="background: rgba(129, 140, 248, 0.1); color: var(--primary);">Section: -</span>
+                            <span id="view-addon-display" class="badge"
+                                style="background: rgba(129, 140, 248, 0.1); color: var(--primary);">Addon: -</span>
                         </div>
                     </div>
                 </header>
@@ -270,6 +274,31 @@
                                 <option value="CWS Crisis Response">CWS Crisis Response</option>
                                 <option value="Draft">Draft</option>
                             </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="section">Section</label>
+                            <select id="section" class="form-select">
+                                <option value="East Hawaii Child Welfare Services Section">East Hawaii Child Welfare Services Section</option>
+                                <option value="Oahu Child Welfare Services Section">Oahu Child Welfare Services Section</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Addon (Multi-select)</label>
+                            <div class="multi-select-container" id="global_addon_wrap">
+                                <div class="multi-select-display" onclick="toggleDropdown('global_addon_list')">
+                                    <span class="placeholder-text">Select Addons...</span>
+                                </div>
+                                <div class="dropdown-list" id="global_addon_list">
+                                    <div class="dropdown-item" onclick="selectMultiItem('global', 'addon', 'Contact')">Contact</div>
+                                    <div class="dropdown-item" onclick="selectMultiItem('global', 'addon', 'Attachment')">Attachment</div>
+                                    <div class="dropdown-item" onclick="selectMultiItem('global', 'addon', 'Checklist')">Checklist</div>
+                                    <div class="dropdown-item" onclick="selectMultiItem('global', 'addon', 'Relationship')">Relationship</div>
+                                </div>
+                                <input type="hidden" id="global_addon_val">
+                            </div>
                         </div>
                     </div>
 

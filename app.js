@@ -2,7 +2,7 @@
  * Premium Frontend Logic for Login and Auth Management
  */
 
-const API_URL = "https://script.google.com/macros/s/AKfycbzEgxUJt8TKnowagUdUbRRGaKFuqGX6w2CAHjgVamjrG7HV6quDrpZcCf8m4cLyHkAa/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbzjSFiwD0OtGXhgzyOvSxx_1OE-2CESoF-iendwMT0NRwsIoms2QaQ_amD4a2NpBhHQ/exec";
 
 const AUTO_NAMES = ["Liam", "Olivia", "Noah", "Emma", "Mason", "Ava", "Ethan", "Sophia", "Lucas", "Isabella", "James", "Mia", "Benjamin", "Charlotte", "Elijah", "Amelia", "Logan", "Harper", "Alexander", "Evelyn", "Daniel", "Abigail", "Matthew", "Ella", "Joseph", "Scarlett", "David", "Victoria", "Samuel", "Grace", "Henry", "Chloe", "Jackson", "Lily", "Sebastian", "Hannah", "Jack", "Zoey", "Owen", "Penelope", "Wyatt", "Layla", "Gabriel", "Nora", "Carter", "Riley", "Jayden", "Stella", "Luke", "Ellie", "Julian", "Aria", "Levi", "Natalie", "Isaac", "Aurora", "Anthony", "Savannah", "Dylan", "Claire", "Thomas", "Skylar", "Charles", "Lucy", "Christopher", "Violet", "Joshua", "Hazel", "Andrew", "Brooklyn", "Ryan", "Addison", "Nathan", "Paisley", "Aaron", "Bella", "Caleb", "Madeline", "Christian", "Naomi", "Jonathan", "Kennedy", "Isaiah", "Ariana", "Hunter", "Piper", "Eli", "Delilah", "Connor", "Sadie", "Landon", "Julia", "Adrian", "Alice", "Robert", "Everly", "Kevin", "Ruby", "Brandon", "Daisy"];
 
@@ -134,6 +134,17 @@ async function handleIntakeSubmit(e) {
     const totalPersons = parseInt(numPersonsSelect.value);
     const portal = document.getElementById('portal').value;
     const level = document.getElementById('level').value;
+    const section = document.getElementById('section').value;
+
+    // Convert Addon multi-select to JSON string format for backend
+    const rawAddon = document.getElementById('global_addon_val').value;
+    const addonObj = {};
+    if (rawAddon) {
+        rawAddon.split(', ').forEach(item => {
+            addonObj[item.toLowerCase()] = "true";
+        });
+    }
+    const addon = JSON.stringify(addonObj);
 
     // 1. Collect all Person Data into structured JSON
     const personsData = {};
@@ -178,6 +189,8 @@ async function handleIntakeSubmit(e) {
         body.append('totalPerson', totalPersons);
         body.append('portal', portal);
         body.append('level', level);
+        body.append('section', section);
+        body.append('addon', addon);
         body.append('personsData', JSON.stringify(personsData));
 
         const response = await fetch(API_URL, {
@@ -272,7 +285,11 @@ function switchView(viewId) {
             currentPage = 1; // Reset to page 1 when going to dashboard
             renderGrid(1);
         }
-        if (viewId === 'add') generatePersonFields(parseInt(numPersonsSelect.value));
+        if (viewId === 'add') {
+            personSelections['global_addon'] = [];
+            updateMultiDisplay('global', 'addon');
+            generatePersonFields(parseInt(numPersonsSelect.value));
+        }
     }
 }
 
@@ -573,8 +590,23 @@ function viewRecord(reference) {
 
     const portalDisplay = document.getElementById('view-portal-display');
     const levelDisplay = document.getElementById('view-level-display');
+    const sectionDisplay = document.getElementById('view-section-display');
+    const addonDisplay = document.getElementById('view-addon-display');
     if (portalDisplay) portalDisplay.textContent = `Portal: ${record.portal || '-'}`;
     if (levelDisplay) levelDisplay.textContent = `Level: ${record.level || '-'}`;
+    if (sectionDisplay) sectionDisplay.textContent = `Section: ${record.section || '-'}`;
+
+    // Extract addon for clean display
+    let displayAddon = record.addon || '-';
+    if (displayAddon.startsWith('{')) {
+        try {
+            const parsed = JSON.parse(displayAddon);
+            displayAddon = Object.keys(parsed)
+                .map(k => k.charAt(0).toUpperCase() + k.slice(1))
+                .join(', ') || '-';
+        } catch (e) { }
+    }
+    if (addonDisplay) addonDisplay.textContent = `Addon: ${displayAddon}`;
 
     // 2. Parse Persons Data
     let persons = {};
@@ -804,6 +836,25 @@ function handleDuplicate() {
     // 3. Set Global Fields
     document.getElementById('portal').value = currentViewedRecord.portal || 'InternalQA';
     document.getElementById('level').value = currentViewedRecord.level || 'CWS Assessment';
+    document.getElementById('section').value = currentViewedRecord.section || 'East Hawaii Child Welfare Services Section';
+
+    // Set Addon Fields
+    const rawAddon = currentViewedRecord.addon;
+    personSelections['global_addon'] = [];
+    if (rawAddon && rawAddon.startsWith('{')) {
+        try {
+            const parsed = JSON.parse(rawAddon);
+            Object.keys(parsed).forEach(k => {
+                if (parsed[k] === "true") {
+                    personSelections['global_addon'].push(k.charAt(0).toUpperCase() + k.slice(1));
+                }
+            });
+        } catch (e) { }
+    } else if (rawAddon && rawAddon !== '-') {
+        personSelections['global_addon'] = rawAddon.split(', ');
+    }
+    updateMultiDisplay('global', 'addon');
+
     numPersonsSelect.value = count;
 
     // 4. Generate & Populate Fields
