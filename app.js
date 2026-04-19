@@ -2,7 +2,7 @@
  * Premium Frontend Logic for Login and Auth Management
  */
 
-const API_URL = "https://script.google.com/macros/s/AKfycbzjSFiwD0OtGXhgzyOvSxx_1OE-2CESoF-iendwMT0NRwsIoms2QaQ_amD4a2NpBhHQ/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbz4gsMckaJDxj4eV1usNhzclORfbpNnNO2qt-62qgoMgfpbJuIjtvI-PJnyBP4BECY/exec";
 
 const AUTO_NAMES = ["Liam", "Olivia", "Noah", "Emma", "Mason", "Ava", "Ethan", "Sophia", "Lucas", "Isabella", "James", "Mia", "Benjamin", "Charlotte", "Elijah", "Amelia", "Logan", "Harper", "Alexander", "Evelyn", "Daniel", "Abigail", "Matthew", "Ella", "Joseph", "Scarlett", "David", "Victoria", "Samuel", "Grace", "Henry", "Chloe", "Jackson", "Lily", "Sebastian", "Hannah", "Jack", "Zoey", "Owen", "Penelope", "Wyatt", "Layla", "Gabriel", "Nora", "Carter", "Riley", "Jayden", "Stella", "Luke", "Ellie", "Julian", "Aria", "Levi", "Natalie", "Isaac", "Aurora", "Anthony", "Savannah", "Dylan", "Claire", "Thomas", "Skylar", "Charles", "Lucy", "Christopher", "Violet", "Joshua", "Hazel", "Andrew", "Brooklyn", "Ryan", "Addison", "Nathan", "Paisley", "Aaron", "Bella", "Caleb", "Madeline", "Christian", "Naomi", "Jonathan", "Kennedy", "Isaiah", "Ariana", "Hunter", "Piper", "Eli", "Delilah", "Connor", "Sadie", "Landon", "Julia", "Adrian", "Alice", "Robert", "Everly", "Kevin", "Ruby", "Brandon", "Daisy"];
 
@@ -286,9 +286,21 @@ function switchView(viewId) {
             renderGrid(1);
         }
         if (viewId === 'add') {
+            // Reset global form fields to defaults
+            const portalEl = document.getElementById('portal');
+            const levelEl = document.getElementById('level');
+            const sectionEl = document.getElementById('section');
+            const numPersonsEl = document.getElementById('num-persons');
+
+            if (portalEl) portalEl.selectedIndex = 0;
+            if (levelEl) levelEl.selectedIndex = 0;
+            if (sectionEl) sectionEl.selectedIndex = 0;
+            if (numPersonsEl) numPersonsEl.value = '2';
+
             personSelections['global_addon'] = [];
             updateMultiDisplay('global', 'addon');
-            generatePersonFields(parseInt(numPersonsSelect.value));
+            
+            generatePersonFields(parseInt(numPersonsEl ? numPersonsEl.value : 2));
         }
     }
 }
@@ -358,7 +370,7 @@ async function renderGrid(page = 1) {
                             <button class="action-btn" title="Refresh Status" ${!record.runid ? 'disabled style="opacity:0.3; cursor:not-allowed;"' : ''} onclick="refreshRecordStatus('${record.reference}', '${record.runid}', this)">
                                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" width="18"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
                             </button>
-                            <button class="action-btn" title="View Logs" ${!record.jobid ? 'disabled style="opacity:0.3; cursor:not-allowed;"' : ''} onclick="viewLogs('${record.reference}', '${record.runid}')">
+                            <button class="action-btn" title="View Logs" ${!record.jobid ? 'disabled style="opacity:0.3; cursor:not-allowed;"' : ''} onclick="viewLogs('${record.reference}', '${record.runid}', ${record.intakeno ? 'false' : 'true'})">
                                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" width="18"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                             </button>
                         </div>
