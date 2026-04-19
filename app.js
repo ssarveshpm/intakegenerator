@@ -101,6 +101,25 @@ document.addEventListener('DOMContentLoaded', () => {
     const dupBtnBottom = document.getElementById('view-duplicate-btn-bottom');
     if (dupBtnTop) dupBtnTop.addEventListener('click', handleDuplicate);
     if (dupBtnBottom) dupBtnBottom.addEventListener('click', handleDuplicate);
+
+    // Mascot Background Transition Logic
+    const passwordInput = document.getElementById('password');
+    const bgLayers = document.querySelectorAll('.bg-layer');
+
+    if (passwordInput && bgLayers.length > 0) {
+        const setMascotState = (state) => {
+            bgLayers.forEach(layer => {
+                layer.classList.remove('active');
+                if (layer.classList.contains(`bg-${state}`)) {
+                    layer.classList.add('active');
+                }
+            });
+        };
+
+        passwordInput.addEventListener('focus', () => setMascotState('closed'));
+        passwordInput.addEventListener('input', () => setMascotState('closed'));
+        passwordInput.addEventListener('blur', () => setMascotState('open'));
+    }
 });
 
 /**
