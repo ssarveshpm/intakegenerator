@@ -571,6 +571,29 @@ async function refreshRecordStatus(reference, runid, btn) {
                         logsBtn.style.cursor = "pointer";
                     }
                 }
+
+                // NEW: Background Intakeno Extraction
+                if ((newStatus === 'success' || newStatus === 'completed') && (!rec.intakeno || rec.intakeno === '-')) {
+                    try {
+                        const urlLog = `${API_URL}?action=refreshLogs&username=${encodeURIComponent(username)}&role=${encodeURIComponent(role)}&token=${encodeURIComponent(token)}&reference=${encodeURIComponent(reference)}`;
+                        const resLog = await fetch(urlLog);
+                        const resultLog = await resLog.json();
+
+                        if (resultLog.status === 'success' && resultLog.data && resultLog.data.intakeno) {
+                            rec.intakeno = resultLog.data.intakeno;
+                            if (row.cells && row.cells[8]) {
+                                row.cells[8].textContent = rec.intakeno;
+                            }
+                            
+                            const logsBtn = row.querySelector('button[title="View Logs"]');
+                            if (logsBtn) {
+                                logsBtn.setAttribute('onclick', `viewLogs('${reference}', '${runid}', false)`);
+                            }
+                        }
+                    } catch (e) {
+                         console.error("Silent log refresh failed", e);
+                    }
+                }
             }
         } else {
             if (result.message && result.message.toLowerCase().includes('token')) {
