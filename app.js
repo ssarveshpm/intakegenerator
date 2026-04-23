@@ -148,6 +148,11 @@ async function handleIntakeSubmit(e) {
 
     // 1. Collect all Person Data into structured JSON
     const personsData = {};
+    let hasVictim = false;
+    let hasPerpetrator = false;
+
+    const todayStrSubmit = new Date().toISOString().split('T')[0];
+
     for (let i = 1; i <= totalPersons; i++) {
         const baseId = `add-p${i}`;
         const fname = addView.querySelector(`input[name="p${i}_fname"]`)?.value || '';
@@ -155,6 +160,14 @@ async function handleIntakeSubmit(e) {
         const gender = addView.querySelector(`select[name="p${i}_gender"]`)?.value || '';
         const dob = addView.querySelector(`input[name="p${i}_dob"]`)?.value || '';
         const p_role = addView.querySelector(`select[name="p${i}_role"]`)?.value || '';
+
+        if (dob && dob > todayStrSubmit) {
+            alert(`Date of Birth cannot be a future date (Person ${i}).`);
+            return;
+        }
+
+        if (p_role === 'Alleged Victim') hasVictim = true;
+        if (p_role === 'Alleged Perpetrator') hasPerpetrator = true;
 
         // Allegation fields (only for victims)
         const classification = document.getElementById(`${baseId}_classification_val`)?.value || '';
@@ -173,6 +186,11 @@ async function handleIntakeSubmit(e) {
             physical: physical,
             perpetrator: perpetrator
         };
+    }
+
+    if (!hasVictim || !hasPerpetrator) {
+        alert('Please add at least one person with the role "Alleged Victim" and one person with the role "Alleged Perpetrator".');
+        return;
     }
 
     // Show loading state
@@ -414,6 +432,8 @@ function getPersonHTML(i, isViewOnly = false) {
     const physicalClick = isViewOnly ? '' : `onclick="toggleDropdown('${baseId}_physical_abuse_list')"`;
     const perpClick = isViewOnly ? '' : `onclick="toggleDropdown('${baseId}_perpetrator_list')"`;
 
+    const todayStr = new Date().toISOString().split('T')[0];
+
     return `
         <div class="person-section ${isViewOnly ? 'view-only' : ''}">
             <h3>Person ${i}</h3>
@@ -444,7 +464,7 @@ function getPersonHTML(i, isViewOnly = false) {
                 </div>
                 <div class="form-group">
                     <label>Date of Birth</label>
-                    <input type="date" ${disabledAttr} name="p${i}_dob">
+                    <input type="date" ${disabledAttr} name="p${i}_dob" max="${todayStr}">
                 </div>
             </div>
             
